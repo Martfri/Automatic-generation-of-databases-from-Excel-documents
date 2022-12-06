@@ -1,0 +1,46 @@
+﻿@using VT1.Models
+@model IEnumerable<Table>
+
+
+<div class="text-center">
+    @foreach (Table t in Model){
+        <h2>@t.name</h2>
+      <div class="table-responsive">
+        <table class="table table-striped table-sm">
+          <thead>
+              <tr>
+              @foreach (string c in t.columns){
+            
+              <th scope="col">@c</th>     
+              }
+            </tr>
+              
+          </thead>
+          <tbody>
+            
+            @for (int i = 0; i < t.rowCount; i++)
+            {
+                <tr>    
+                @for (int j = 0; j < t.columnCount; j++)
+                {                              
+                    
+                    <td>@t.values[i,j]</td>             
+                 
+                }
+                </tr>
+         
+            }
+              
+            
+          </tbody>
+          </table>
+          </div>
+    }
+          </div>
+<form asp-action="TableView" method="post" style="width: auto; margin: 0 5%;">
+
+
+   <button type="submit">Upload to database</button>
+  
+
+</form>
