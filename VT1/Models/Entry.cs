@@ -2,8 +2,9 @@
 {
     public class Entry
     {
-        public string value { get; set; }
+        public object? value { get; set; }
         public int i { get; set; }
         public int j { get; set; }
+        public int tableCount { get; set; }
     }
 }

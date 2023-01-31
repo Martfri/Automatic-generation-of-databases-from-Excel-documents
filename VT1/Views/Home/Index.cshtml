@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    TempData.Keep();
 }
 
 <form enctype="multipart/form-data" method="post" asp-controller="Home" asp-action="ImportExcelFile", style="width: auto; margin: 0 5%;">
@@ -8,7 +9,7 @@
             <label>Upload Excel:</label>
         </dt>
         <dd>
-            <input type="file" name="FormFile" id="FormFile">
+            <input type="file" name="FormFile" id="FormFile" capture = "english", accept="xls">
 
         </dd>
     </dl>

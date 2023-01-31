@@ -175,6 +175,9 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
+      <partial name="_LoginPartial" style="color:white"/>
+
+      
       <!-- Sidebar user panel (optional) -->
 @*      <partial name ="_LoginPartial" />*@
       <hr/>
@@ -196,6 +199,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
+
            <li class="nav-item">
             <a asp-area="" asp-controller="Home" asp-action = "Index" class="naiv-link">
               <i class="nav-icon fas fa-home"></i>
@@ -316,6 +320,6 @@
 <script src="https://code.jquery.com/uj/1.12.1/jquery-ui.js" ></script>
 
 
-@RenderSection("Scripts", required:false)
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

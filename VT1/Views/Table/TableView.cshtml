@@ -1,9 +1,6 @@
 ﻿@using VT1.Models
 @model IEnumerable<Table>
-@{
-
-    TempData.Keep();
-}
+TempData.Keep();
 
 
 <div class="text-center">
@@ -21,17 +18,10 @@
                 </tr>              
           </thead>
           <tbody>
-                @if (Model == null)
-                {
-                    <div class="alert">
-                        <strong>Upload an Excel document first!</strong>
-                    </div>
-                }
-                else{
                 @foreach (Table t in Model)
                 {
                 <tr>              
-                    <td>@t.tableName</td>                        
+                    <td> <div contenteditable id="name">@t.tableName </div> </td>                        
                     <td>@t.rowCount</td> 
                     <td>@t.columnCount</td> 
                         <td>@Html.ActionLink("Preview |", "Preview", new {name = t.tableName}) 
@@ -42,7 +32,7 @@
                     </td>
                     
                 </tr>
-              } }
+              } 
           </tbody>
           </table>
           </div>    
@@ -54,24 +44,28 @@
         </form>
 
         <form asp-action="Export" method="get" style="width: auto; margin: 0 10%;">    
-            <button type="submit">Export data model to JSON</button>
+            <button type="submit">Export data model to json</button>
         </form>
     </div>
 
-@if (ViewBag.Message == "Success")
+@if (TempData["Success"] != null)
 {
     <div class ="alert success">
         <strong>Tables successfully uploaded to database</strong>
     </div>
     
 }
-@if (ViewBag.Message == "Error")
+@if (TempData["Error"] != null)
 {
     <div class="alert error">
         <strong>Error while uploading tables to database</strong>
     </div>
 
 }
+
+  
+
+
  
 <script>
     $(function () {
@@ -85,7 +79,7 @@
             $.ajax(
             {
                 type: "POST",
-                url: '@Url.Action("Delete", "Home")',
+                url: '@Url.Action("Delete", "Table")',
                 data: {
                     name: name
                 },
