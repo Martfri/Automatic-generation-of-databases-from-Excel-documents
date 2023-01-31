@@ -1,7 +1,4 @@
 ﻿using OfficeOpenXml;
-using System.Dynamic;
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics.X86;
 using VT1.Models;
 
 namespace VT1.Services
@@ -23,27 +20,8 @@ namespace VT1.Services
         public List<Table> FFinalTables { get; set; }
         public List<dynamic> models = new List<dynamic>();
 
-        //public static ExcelService instance = null;
         private static string filePath = ".\\wwwroot\\Uploads\\Test.xlsx";
         
-
-
-
-        //public static ExcelService Instance
-        //{
-        //    get
-        //    {
-        //        if (instance == null)
-        //        {
-
-                    
-
-
-        //            instance = new ExcelService();
-        //        }
-        //        return instance;
-        //    }
-        //}
 
         public ExcelService()
         {
@@ -52,8 +30,7 @@ namespace VT1.Services
             ExcelPackage sss = new ExcelPackage(filePath);
             wss = sss.Workbook.Worksheets;
             var table = TableDetection();
-            MapToTable(table);
-           
+            MapToTable(table);           
         }
 
 
@@ -63,10 +40,13 @@ namespace VT1.Services
             {
                 int colCount;
                 int rowCount;
+
                 try 
                 {
-                    colCount = ws.Dimension.End.Column;  //get Column Count
-                    rowCount = ws.Dimension.End.Row;     //get row count
+                    //get column count of document
+                    colCount = ws.Dimension.End.Column;
+                    //get row count of document
+                    rowCount = ws.Dimension.End.Row;     
                 }
 
                 catch 
@@ -95,6 +75,7 @@ namespace VT1.Services
 
             else if (IsDataCell(i, j, ews) || ews.Cells[i, j].Value is "n/a" or "N/A")
             {
+                // Add new entry (N/A)
                 if (ews.Cells[i, j].Value is "n/a" or "N/A")
                 {
                     var na = new Entry();
@@ -105,6 +86,8 @@ namespace VT1.Services
                     na.tableCount = tableCounter;
 
                 }
+
+                // Add new entry
                 else
                 {
                     var data = new Entry();
@@ -117,6 +100,7 @@ namespace VT1.Services
 
            }
 
+            // Add new header
            else if (IsHeaderCell(i, j, ews))
            {
                 var column = new Column();
@@ -127,6 +111,7 @@ namespace VT1.Services
                 columns.Add(column);
            }
 
+            // Add new title
            else if (IsTitleCell(i, j, ews))
            {                
                 var title = new TableName();
@@ -137,7 +122,10 @@ namespace VT1.Services
                 tables.Add(title);
            }
 
-           else { return null; }
+           else
+            {
+                return null;
+            }
 
            return tables;
 
@@ -145,17 +133,19 @@ namespace VT1.Services
         
         public bool IsTitleCell(int i, int j, ExcelWorksheet ews)
         {
-            //vereinfachen und kommentieren
+            // Cell is type of string and there is a seperator
             if (ews.Cells[i, j].Value.GetType() == typeof(string) && columns.Where(c=> c.tableCount == tableCounter).Count() != 0 && ews.Cells[i + 1, j].Value == null)
             {
                 return true;
             }
 
-            else if(tables.Where(t => t.tableCount == tableCounter).Count() != 0 && (IsTitleCell(i+1, j, ews) || IsTitleCell(i + 1, j-1, ews) || IsTitleCell(i + 1, j +1, ews))) 
+            // A a title cell has already been found and in the last row scanned, a title cell has been detected
+            else if (tables.Where(t => t.tableCount == tableCounter).Count() != 0 && (IsTitleCell(i+1, j, ews) || IsTitleCell(i + 1, j-1, ews) || IsTitleCell(i + 1, j +1, ews))) 
             {
                 return true;
             }
 
+            // A header cell has been found, C[i,j-1] is empty, C[i,j+1] empty and j is the table’s first column
             else if (columns.Where(c=> c.tableCount == tableCounter).Count() != 0 && ews.Cells[i, j+1].Value == null && ews.Cells[i, j - 1].Value == null && columns.Where(c => c.tableCount == tableCounter).First().count == (columns.Where(c => c.tableCount == tableCounter).MinBy(c => c.count).count))
             {
                 return true;
@@ -171,22 +161,25 @@ namespace VT1.Services
         {
             if (ews.Cells[i, j].Value == null) return false;
 
+            // Cell has type string and row below is not null
             else if (columns.Where(c => c.tableCount == tableCounter).Count() != 0 && ews.Cells[i, j].Value.GetType() == typeof(string) && ews.Cells[i+1,j].Value != null)
             {
                 return true;
             }
-                //check also for color
+
+            // Cell or neighbour cells have borders and row below is not null
             else if (HasBorders(i, j, ews) && (HasBorders(i, j + 1, ews) || HasBorders(i, j - 1, ews)) && ews.Cells[i + 1, j].Value != null)
             {
                 return true;
             }
 
+            // Cell and neighbour cells have borders and row below is not null
             else if (HaveSimilarFormat(i, j, i, j - 1, ews) && HaveSimilarFormat(i, j, i, j + 1, ews) && ews.Cells[i + 1, j].Value != null)
             {
                  return true;
             }
 
-             //nochmals checken
+            // Rules for similar formatting between two consecutive cells and to distinguish headers from data entries
             else if (ews.Cells[i + 1,j].Value != null && ews.Cells[i + 1,j].Value.GetType() != typeof(string) && ews.Cells[i,j].Value.GetType() == typeof(string) && !HaveSimilarFormat(i, j, i + 1, j, ews) && ews.Cells[i, j - 1].Value != null && HaveSimilarFormat(i, j, i, j - 1, ews))
             {
                 return true;
@@ -251,6 +244,7 @@ namespace VT1.Services
             }
         }
 
+        // Mapping from column-based model to row-based
         public List<Table> MapToTable(List<TableName> tableNames)
         {
             List<Table> finalTables = new List<Table>();
@@ -272,18 +266,10 @@ namespace VT1.Services
                 {
                     var col = columns[colIdx];
                     table.columns[colIdx] = col.Name;
-					//table.columnsWithDatatType[colIdx] = col.Name + "(" + col.entries.First().GetType().Name + ")";
-
 
 					for (int rowIdx = 0; rowIdx < col.entries.Count; rowIdx++)
                     {
-                        //if (col.entries[rowIdx].value is "n/a" or "N/A")
-                        //{
-                        //    table.values[rowIdx, colIdx] = null;
-                        //}
                         var entry = col.entries[rowIdx];
-
-                        // falls Null-Zellen im Excel erlaubt sind, muss dies hier noch implementiert werden!
                         table.values[rowIdx, colIdx] = entry.value;
                     }
                 }

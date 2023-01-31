@@ -5,9 +5,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Text;
-using System.Xml.Linq;
-using OfficeOpenXml.Style.Dxf;
-using Microsoft.AspNetCore.Components.Forms;
 
 namespace VT1.Services
 {
@@ -120,6 +117,7 @@ namespace VT1.Services
             ExecCommand(cmd, GetConnectionString("master"));
         }
 
+        // Helper function to execute Sql commands
         private static void ExecCommand(string queryString, string connectionString) 
         { 
             using (SqlConnection connection = new SqlConnection(connectionString))

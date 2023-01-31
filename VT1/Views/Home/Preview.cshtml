@@ -31,45 +31,21 @@
                     <td>@Model.values[i,j]</td>             
                  
                 }
-                </tr>
-         
-            }
-              
+                </tr>         
+            }           
             
           </tbody>
           </table>
-          </div>
-        
-    
-          </div>
+          </div>    
+</div>
 
+ <div class="row mt-3"> 
 
-        <div class="row mt-3">
-
-@*             <form asp-action="TableView" method="post" style="width: auto; margin: 0 5%;">
-
-
-            <button type="submit">Upload to database </button>
+ 
+    <form asp-action="TableView" method="get" style="width: auto; margin: 0 5%;">
    
-  
+       <button type="submit">Back</button> 
 
-            </form>*@
-            <form asp-action="TableView" method="get" style="width: auto; margin: 0 5%;">
+    </form>
 
-
-   
-             <button type="submit">Back</button>
-  
-
-            </form>
-
-@*    <form asp-action="Export" method="get" style="width: auto; margin: 0 5%;">
-
-
-
-            <button type="submit">Export data model to json</button>
-
-
-            </form>*@
-
-        </div>
+</div>
